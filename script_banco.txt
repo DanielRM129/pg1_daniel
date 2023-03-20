@@ -1,0 +1,89 @@
+CREATE DATABASE gaveteiroVirtual;
+USE gaveteiroVirtual;
+
+CREATE TABLE `usuarios` (
+`codusuario` INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+`nome` VARCHAR(30) UNIQUE NOT NULL,
+email VARCHAR(250) UNIQUE NOT NULL,
+`senha` VARCHAR(250) DEFAULT '12345' NOT NULL,
+`imagem` VARCHAR(50) DEFAULT 'foto.png' NOT NULL,
+status BOOLEAN DEFAULT FALSE
+) ENGINE = innodb;
+
+CREATE TABLE `categorias` (
+`codcategoria` INT(6) UNSIGNED AUTO_INCREMENT NOT NULL,
+`codusuario` INT(6) UNSIGNED NOT NULL,
+`nome` VARCHAR(30) NOT NULL,
+`imagem` VARCHAR(50) DEFAULT 'foto.png' NOT NULL,
+primary key (`codcategoria`, `codusuario`),
+foreign key (`codusuario`) references `usuarios` (`codusuario`)
+) ENGINE = innodb;
+
+CREATE TABLE `origem_fornecedores` (
+`codfornecedor` INT(6) UNSIGNED AUTO_INCREMENT NOT NULL,
+`descricao` VARCHAR(200),
+`endereco` VARCHAR(200),
+`email_contato` VARCHAR(200),
+`cnpj` VARCHAR(200),
+primary key (`codfornecedor`)
+) ENGINE = innodb;
+
+CREATE TABLE `destino_venda` (
+`codvenda` INT(6) UNSIGNED AUTO_INCREMENT NOT NULL,
+`destino` VARCHAR(50),
+`venda` NUMERIC(7,2),
+`dt_saida` DATE,
+primary key (`codvenda`)
+) ENGINE = innodb;
+
+CREATE TABLE `itens` (
+`coditem` INT(6) UNSIGNED AUTO_INCREMENT NOT NULL,
+`codcategoria` INT(6) UNSIGNED NOT NULL,
+`codusuario` INT(6) UNSIGNED NOT NULL,
+`codfornecedor` INT(6) UNSIGNED,
+`codvenda` INT(6) UNSIGNED,
+`dt_entrada` DATE,
+`custo` NUMERIC(7,2),
+`nome` VARCHAR(30) NOT NULL,
+`item_desc` VARCHAR(30) NOT NULL,
+`imagem` VARCHAR(50) DEFAULT 'foto.png' NOT NULL,
+primary key (`coditem`, `codcategoria`, `codusuario`),
+foreign key (`codfornecedor`) references `origem_fornecedores` (`codfornecedor`),
+foreign key (`codvenda`) references `destino_venda` (`codvenda`),
+foreign key (`codusuario`) references `usuarios` (`codusuario`),
+foreign key (`codcategoria`) references `categorias` (`codcategoria`)
+) ENGINE = innodb;
+
+CREATE TABLE `areas` (
+`codarea` INT(6) UNSIGNED AUTO_INCREMENT NOT NULL,
+`coditem` INT(6) UNSIGNED NOT NULL,
+`codcategoria` INT(6) UNSIGNED NOT NULL,
+`codusuario` INT(6) UNSIGNED NOT NULL,
+`nome` VARCHAR(30) NOT NULL,
+`area_desc` VARCHAR(30) NOT NULL,
+`imagem` VARCHAR(50) DEFAULT 'foto.png' NOT NULL,
+primary key (`codarea`, `coditem`, `codcategoria`, `codusuario`),
+foreign key (`codusuario`) references `usuarios` (`codusuario`),
+foreign key (`codcategoria`) references `categorias` (`codcategoria`),
+foreign key (`coditem`) references `itens` (`coditem`)
+) ENGINE = innodb;
+
+CREATE TABLE `fones_fornecedores` (
+`num_telefone` INT(11) UNSIGNED NOT NULL,
+`codfornecedor` INT(6) UNSIGNED NOT NULL,
+foreign key (`codfornecedor`) references `origem_fornecedores` (`codfornecedor`),
+primary key (`num_telefone`, `codfornecedor`)
+) ENGINE = innodb;
+
+CREATE TABLE `fones_destino` (
+`num_telefone` INT(11) UNSIGNED NOT NULL,
+`codvenda` INT(6) UNSIGNED NOT NULL,
+foreign key (`codvenda`) references `destino_venda` (`codvenda`),
+primary key (`num_telefone`, `codvenda`)
+) ENGINE = innodb;
+
+CREATE TABLE recuperacao (
+  utilizador  VARCHAR(255) NOT NULL,
+  confirmacao VARCHAR(40) NOT NULL,
+  KEY(utilizador, confirmacao)
+)

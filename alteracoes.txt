@@ -1,0 +1,5 @@
+adicionado campo email em form_cad_usuario;
+alterada logica de cadastro de usuário para fazer validação por email;
+adicinadas funções pesquisarpessoaemail e alterarstatustrue;
+alterada função acessarusuario;
+adicionado valida_email.php, envia_email.php e pasta PHPMailer.
